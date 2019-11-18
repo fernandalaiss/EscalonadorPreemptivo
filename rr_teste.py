@@ -1,6 +1,7 @@
 import os
 import time
 import signal
+import collections 
 
 def SIGINT_handler(sig_number, sig_stack):
     	print ("So pegando sinal de ctrl+c mesmo")
@@ -8,19 +9,18 @@ def SIGINT_handler(sig_number, sig_stack):
 def round_robin():
     tempo1 = int(input(" - Insira o tempo do dummy 1: "))
     tempo2 = int(input(" - Insira o tempo do dummy 2: "))
-
-    dummy1 = "python3 dummy1.py"
-    dummy2 = "python3 dummy2.py"
-    lista_processos = [dummy1, dummy2]
-    #lista_tempos = []
+    d1 = ("./dummy1.py", tempo1)
+    d2 = ("./dummy2.py", tempo2)
+    deque_processos = collections.deque([d1,d2])
+    
     contador = 0
     aux = ""
     
     #falta ver como criar os processos e deixarem aguardando signal do escalonador
     #e pegar o tempo de entrada e em que o processo ficará em execução
-    while lista_processos[0] != "":
-        #print("O meu processo é ", processo, ".\n")
-        os.system(lista_processos[0])
+    while deque_processos[0] != None:
+        
+        """os.system(dict_processos.get(key))
         while contador < quantum:
             print(lista_processos[0])
             time.sleep(1)
@@ -32,7 +32,7 @@ def round_robin():
             lista_processos[1] = aux
             contador = 0
             ##envia SIGNAL para interromper processo e o coloca no fim da fila
-            #signal.signal(signal.SIGINT, SIGINT_handler)
+            #signal.signal(signal.SIGINT, SIGINT_handler)"""
   
 
 def main():
