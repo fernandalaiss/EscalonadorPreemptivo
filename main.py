@@ -26,7 +26,7 @@ if __name__ == '__main__':
     main()
     
 escolha = input (" - Escolha: ")
-#ENQUANDO A ESCOLHA FOR DIFERENTE DE 0, EXECUTA O RESPECTIVO ALGORITMO, ABRE O GRÁFICO OU RETORNA COMANDO INVALIDO
+
 while escolha != "0":
 	if escolha == "1":
             print("##### FIRST IN, FIRST OUT ########")
