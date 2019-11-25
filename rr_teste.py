@@ -26,10 +26,10 @@ def first_in_first_out():
         
         proc = subprocess.Popen(['python', executavel])
         time.sleep(t)
-        
         pass
         
-
+def fair_share():
+#dividir processo em tempo igual de processamento
 
 def round_robin():
 
@@ -72,7 +72,6 @@ def round_robin():
         
         #usar rotate(-1) para mover primeiro elemento para ultima posicao
         if(deque_processos[0][1] == 0):
-            os.kill(pid, signal.SIGKILL)
             deque_processos.popleft()
         else:
             deque_processos.rotate(-1)
