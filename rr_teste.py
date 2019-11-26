@@ -22,63 +22,56 @@ def first_in_first_out():
     fila_processos = getProcessos("fila")
     while not(fila_processos.empty()):
         executavel, t = fila_processos.get()
-        print("\n-----------------------------------\n O processo", executavel, "está em execução \n-----------------------------------\n")
-        
+        print("\n--------------------------------------------------------\n O processo", executavel, "está em execução\n--------------------------------------------------------\n")
         proc = subprocess.Popen(['python', executavel])
         time.sleep(t)
-        
-        pass
-        
+        pass        
 
-
-def round_robin():
-
-    quantum = float(input(" - Insira o valor do quantum: "))
+def fair_share():
     deque_processos = getProcessos("deque")
+    #calcular tempo: 100% do tempo / n° de processos
+    total_time = 0
+    for dummy, time in deque_processos:
+        total_time += time
+    share_time = total_time / len(deque_processos)
+    print("O valor do quantum utilizando fair share é ",share_time)
+    round_robin(share_time)
     
-    #falta ver como criar os processos e deixarem aguardando signal do escalonador
-    #e pegar o tempo de entrada e em que o processo ficará em execução
+
+def round_robin(quantum):
+
+    deque_processos = getProcessos("deque")
+    dict_proc = {}
+    
     while len(deque_processos) > 0:
-        executavel = deque_processos[0][0]
-        tempo_do_executavel = deque_processos[0][1]
-        #comparar o tempo necessário para execução de cada processo com o tempo de quantum
-        #executa tudo se for menor que o quantum, executa o tempo de quantum e vai pro fim da fila com o que sobrar
-        """proc = executavel.Popen()
-        try:
-            outs, errs = proc.communicate(timeout=15)
-        except TimeoutExpired:
-            proc.kill()
-            outs, errs = proc.communicate()"""
-
-
+        executavel, tempo_do_executavel = deque_processos[0]
+        
         print("\n--------------------------------------------------------\n O processo", executavel, "está em execução\n--------------------------------------------------------\n")
         
-        proc = subprocess.Popen(['python', executavel])
-        pid = proc.pid
-
-        #pid_child = os.fork()
+        if executavel in dict_proc:
+            os.kill(dict_proc[executavel], signal.SIGCONT)
+        else:
+            proc = subprocess.Popen(['python', executavel])
+            dict_proc[executavel] = proc.pid
+        
         if(tempo_do_executavel > quantum):
             time.sleep(quantum)
             deque_processos[0] = (executavel, tempo_do_executavel-quantum)
         
         elif(tempo_do_executavel <= quantum):
             time.sleep(tempo_do_executavel)
-            #executavel = deque_processos[0][0]
-            #tempo_do_executavel = deque_processos[0][1]
-            #print("oi ", deque_processos[0][1])
             deque_processos[0] = (executavel, 0) 
         
-        os.kill(pid, signal.SIGINT)
+        os.kill(dict_proc[executavel], signal.SIGSTOP)
         
         #usar rotate(-1) para mover primeiro elemento para ultima posicao
         if(deque_processos[0][1] == 0):
+            pid = dict_proc[executavel]
             os.kill(pid, signal.SIGKILL)
             deque_processos.popleft()
         else:
             deque_processos.rotate(-1)
-    
     pass
-
 
 def main():
     print ("\nSelecione o algoritmo de escalonamento\n (1) FIFO\n (2) Fair Share\n (3) Round Robin\n (0) Sair")
@@ -86,22 +79,24 @@ def main():
 
     while escolha != "0":
         if escolha == "1":
-                print("\n##### FIRST IN, FIRST OUT ########")
-                first_in_first_out()
-                pass
+            print("\n##### FIRST IN, FIRST OUT ########")
+            first_in_first_out()
+            pass
         elif escolha == "2":
             print("\n########### FAIR SHARE ###########")
-            print("***Algoritmo ainda não está implementado.\n")
+            fair_share()
             pass
         elif escolha == "3":
             print("\n########## ROUND ROBIN ###########")
-            round_robin()
+            quantum = float(input("\n- Digite o valor do quantum: "))
+            round_robin(quantum)
             pass
         else:
             print("\n***Escolha inválida! Tente novamente.")
             pass
         main()
         escolha = input ("\n - Escolha: ")
+    return
     
 if __name__ == '__main__':
     main()
