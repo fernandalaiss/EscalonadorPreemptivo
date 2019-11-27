@@ -4,10 +4,10 @@ import signal
 import subprocess
 import collections 
 import queue
+import time
+import psutil
 
 def getProcessos(estrutura):
-    #tempo1 = int(input(" - Insira o tempo do dummy 1: "))
-    #tempo2 = int(input(" - Insira o tempo do dummy 2: "))
     d1 = ("dummy1.py", 12)
     d2 = ("dummy2.py", 3)
     d3 = ("dummy3.py", 7)
@@ -66,7 +66,7 @@ def round_robin(quantum):
         if executavel in dict_proc:
             os.kill(dict_proc[executavel], signal.SIGCONT)
         else:
-            proc = subprocess.Popen(['python ', executavel])
+            proc = subprocess.Popen(['python', executavel])
             dict_proc[executavel] = proc.pid
         
         if(tempo_do_executavel > quantum):
@@ -95,16 +95,35 @@ def main():
     while escolha != "0":
         if escolha == "1":
             print("\n##### FIRST IN, FIRST OUT ########")
+            fifo_start_time = time.time()
             first_in_first_out()
+            fifo_final_time = time.time() - fifo_start_time
+            print("\n########## TEMPO ###########")
+            print("\nFIFO: %s" %fifo_final_time)
+            print("\n", psutil.cpu_percent())
+            print(psutil.virtual_memory()._asdict())
             pass
         elif escolha == "2":
             print("\n########### FAIR SHARE ###########")
+            fs_start_time = time.time()
             fair_share()
+            fs_final_time = time.time() - fs_start_time
+            pass
+            print("\n########## TEMPO ###########")
+            print("\nFair-Share: %s" %fs_final_time)
+            print("\n", psutil.cpu_percent())
+            print(psutil.virtual_memory()._asdict())
             pass
         elif escolha == "3":
             print("\n########## ROUND ROBIN ###########")
+            rr_start_time = time.time()
             quantum = float(input("\n- Digite o valor do quantum: "))
             round_robin(quantum)
+            rr_final_time = time.time() - rr_start_time
+            print("\n########## TEMPO ###########")
+            print("\nRound Robin: %s" %rr_final_time)
+            print("\n", psutil.cpu_percent())
+            print(psutil.virtual_memory()._asdict())
             pass
         else:
             print("\n***Escolha inválida! Tente novamente.")
