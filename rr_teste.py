@@ -8,14 +8,30 @@ import queue
 def getProcessos(estrutura):
     #tempo1 = int(input(" - Insira o tempo do dummy 1: "))
     #tempo2 = int(input(" - Insira o tempo do dummy 2: "))
-    d1 = ("dummy1.py", 5)
+    d1 = ("dummy1.py", 12)
     d2 = ("dummy2.py", 3)
+    d3 = ("dummy3.py", 7)
+    d4 = ("dummy4.py", 4)
+    d5 = ("dummy5.py", 11)
+    d6 = ("dummy6.py", 17)
+    d7 = ("dummy7.py", 4)
+    d8 = ("dummy8.py", 1)
+    d9 = ("dummy9.py", 13)
+    d10 = ("dummy10.py", 2)
     if(estrutura == "deque"):
-        return collections.deque([d1,d2])
+        return collections.deque([d1,d2,d3,d4,d5,d6,d7,d8,d9,d10])
     elif(estrutura == "fila"):
         q = queue.Queue()
         q.put(d1)
         q.put(d2)
+        q.put(d3)
+        q.put(d4)
+        q.put(d5)
+        q.put(d6)
+        q.put(d7)
+        q.put(d8)
+        q.put(d9)
+        q.put(d10)
         return q
 
 def first_in_first_out():
@@ -23,7 +39,7 @@ def first_in_first_out():
     while not(fila_processos.empty()):
         executavel, t = fila_processos.get()
         print("\n--------------------------------------------------------\n O processo", executavel, "está em execução\n--------------------------------------------------------\n")
-        proc = subprocess.Popen(['python', executavel])
+        subprocess.Popen(['python', executavel])
         time.sleep(t)
         pass        
 
@@ -39,7 +55,6 @@ def fair_share():
     
 
 def round_robin(quantum):
-
     deque_processos = getProcessos("deque")
     dict_proc = {}
     
@@ -51,7 +66,7 @@ def round_robin(quantum):
         if executavel in dict_proc:
             os.kill(dict_proc[executavel], signal.SIGCONT)
         else:
-            proc = subprocess.Popen(['python', executavel])
+            proc = subprocess.Popen(['python ', executavel])
             dict_proc[executavel] = proc.pid
         
         if(tempo_do_executavel > quantum):
